@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Holiday Recommender</title>
+  </head>
+  <body>
+    <h1>Holiday Recommender</h1>
+    <form method="POST" action="/recommend">
+      <label for="category">Choose a category:</label>
+      <select name="category" id="category">
+        <option value="Lazy">Lazy</option>
+        <option value="Active">Active</option>
+      </select>
+      <br>
+      <label for="location">Choose a location:</label>
+      <select name="location" id="location">
+        <option value="Europe">Europe</option>
+        <option value="Asia">Asia</option>
+        <option value="North America">North America</option>
+        <option value="South America">South America</option>
+        <option value="Africa">Africa</option>
+        <option value="Australia">Australia</option>
+      </select>
+      <br>
+      <label for="max_price">Maximum price per night:</label>
+      <input type="number" name="max_price" id="max_price" value="100">
+      <br>
+      <button type="submit">Recommend</button>
+    </form>
+  </body>
+</html>
