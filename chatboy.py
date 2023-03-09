@@ -1,28 +1,41 @@
-import nltk
-from nltk.chat.util import Chat, reflections
+import random
+import json
+from flask import Flask, render_template, request
 
-pairs = [
-    # Patterns for greeting the chatbot
-    ['hi|hello|hey', ['Hi there!', 'Hello!', 'Hey!']],
-    ['how are you', ['I am good, thanks for asking! How can I help you today?']],
-    
-    # Patterns for asking about the chatbot's purpose
-    ['what is your purpose', ['I am here to assist and answer your questions!']],
-    ['why are you here', ['I am here to help you with any questions you have!']],
-    
-    # Patterns for asking for help
-    ['help', ['Sure, what do you need help with?']],
-    ['how do I', ['I can help you with that! What do you need help with?']],
-    
-    # Default response
-    ['(.*)', ["I'm sorry, I don't understand. Can you please rephrase your question?"]],
-]
+app = Flask(__name__)
 
-# Define a function to chat with the user
-def chat():
-    print("Hi! I am your personal chatbot. How can I assist you today?")
-    chatbot = Chat(pairs, reflections)
-    chatbot.converse()
+@app.route("/")
+def home():
+    return render_template("chatbot.html")
 
-if __name__ == '__main__':
-    chat()
+@app.route("/get-response", methods=["POST"])
+def get_bot_response():
+    user_text = request.form["message"]
+    bot_response = get_response(user_text)
+    return str(bot_response)
+
+def get_response(user_text):
+    # Load the chatbot's data
+    with open("chatbot_data.json", "r") as f:
+        data = json.load(f)
+
+    # Find the best match for the user's message
+    best_match = ""
+    best_score = 0
+    for pattern, responses in data["patterns"].items():
+        for pattern_text in pattern.split("|"):
+            score = similarity(user_text, pattern_text)
+            if score > best_score:
+                best_match = random.choice(responses)
+                best_score = score
+
+    return best_match
+
+def similarity(s1, s2):
+    # Calculate the similarity between two strings
+    s1 = set(s1.lower().split())
+    s2 = set(s2.lower().split())
+    return len(s1 & s2) / len(s1 | s2)
+
+if __name__ == "__main__":
+    app.run(debug=True)
